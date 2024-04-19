@@ -1,0 +1,24 @@
+# ninja log v5
+10	428	7352429049914491	CMakeFiles/HW4.dir/item.cpp.obj	16b3498df3499d1d
+24	405	7352429049675135	CMakeFiles/HW4.dir/sorcerer.cpp.obj	3d17e9ecd6961084
+3	546	7352429051081377	CMakeFiles/HW4.dir/fighter.cpp.obj	38d836f540b7e66d
+17	576	7352429051400514	CMakeFiles/HW4.dir/main.cpp.obj	bd61a3706b1f8f5c
+20	548	7352429051081377	CMakeFiles/HW4.dir/npc.cpp.obj	b551d3c6d331a7c9
+7	555	7352429051161159	CMakeFiles/HW4.dir/character.cpp.obj	f95224627ec898af
+572	673	7352415629433389	HW4.exe	fabafa52332ac6b1
+13	554	7352429051161159	CMakeFiles/HW4.dir/hero.cpp.obj	5670f0f8d00205ce
+28	426	7352429341951837	CMakeFiles/HW4.dir/sorcerer.cpp.obj	3d17e9ecd6961084
+24	444	7352429342141335	CMakeFiles/HW4.dir/item.cpp.obj	16b3498df3499d1d
+8	526	7352429342959136	CMakeFiles/HW4.dir/fighter.cpp.obj	38d836f540b7e66d
+12	571	7352429343407938	CMakeFiles/HW4.dir/main.cpp.obj	bd61a3706b1f8f5c
+3	581	7352429343497715	CMakeFiles/HW4.dir/character.cpp.obj	f95224627ec898af
+19	596	7352429343657273	CMakeFiles/HW4.dir/npc.cpp.obj	b551d3c6d331a7c9
+15	627	7352429343976422	CMakeFiles/HW4.dir/hero.cpp.obj	5670f0f8d00205ce
+11	424	7352429920818875	CMakeFiles/HW4.dir/item.cpp.obj	16b3498df3499d1d
+8	582	7352429922344799	CMakeFiles/HW4.dir/fighter.cpp.obj	38d836f540b7e66d
+3	588	7352429922434554	CMakeFiles/HW4.dir/character.cpp.obj	f95224627ec898af
+26	605	7352429922614078	CMakeFiles/HW4.dir/sorcerer.cpp.obj	3d17e9ecd6961084
+14	621	7352429922773647	CMakeFiles/HW4.dir/main.cpp.obj	bd61a3706b1f8f5c
+22	633	7352429922903317	CMakeFiles/HW4.dir/npc.cpp.obj	b551d3c6d331a7c9
+18	645	7352429923022981	CMakeFiles/HW4.dir/hero.cpp.obj	5670f0f8d00205ce
+646	743	7352429923990389	HW4.exe	fabafa52332ac6b1
