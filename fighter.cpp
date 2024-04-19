@@ -6,7 +6,6 @@ Fighter::Fighter(const std::string& name, int health, int gold, int armor, int m
         : NPC(name, health, gold, armor, magicResistance), strength(strength) {}
 
 Fighter::~Fighter() {
-    // TODO Auto-generated destructor stub
 }
 
 

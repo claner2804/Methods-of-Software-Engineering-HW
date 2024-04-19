@@ -7,7 +7,6 @@ Sorcerer::Sorcerer(const std::string& name, int health, int gold, int armor, int
         : NPC(name, health, gold, armor, magicResistance), magicPower(magicPower) {}
 
 Sorcerer::~Sorcerer() {
-    // TODO Auto-generated destructor stub
 }
 
 
