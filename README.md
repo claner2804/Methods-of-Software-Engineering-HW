@@ -1,43 +1,40 @@
-Methoden der Spieleentwicklung IV (100%)
-Der Prototyp Ihres Spiels hat mittlerweile einen gewissen Umfang erreicht. Wie bei Prototypen üblich, haben Sie nur eine rudimentäre Fehlerbehandlung implementiert. Außerdem wollen Sie die Art und Weise, wie Gegenstände gespeichert werden, anpassen. Daher wird es nun Zeit, dass Sie Ihren Prototypen einen grundlegenden Refactoring (= Überarbeitung des Codes, weitere Informationen dazu finden Sie beispielsweise hier bzw. hier) unterziehen, um Ihren Code fit für die weitere Entwicklung zu machen.
+Methoden der Spieleentwicklung V (100%)
+
+Sie haben den letzte Woche implementierten Prototypen Ihres Spiels nun einer größeren Gruppe von Spieletester:innen zum Testen gegeben. Deren Feedback zeigte vor allem zwei Kritikpunkte auf: (1) Das Inventar ist viel zu klein, und (2) es kommt immer wieder zu Abstürzen, die wahrscheinlich von Memory Leaks verursacht werden. Daher haben Sie sich entschlossen, für den nächsten Prototpyen diese zwei Punkte anzugehen.
+
+Unendliches Inventar
+
+Ihre Spieletester:innen haben sich darüber beschwert, dass das Inventar zu beschränkt ist und sie viel zu viel Loot in den Dungeons zurücklassen müssen. Es wurde daher beschlossen, dass alle Charaktere nun ein unbegrenztes Inventar bekommen sollen (Die Ausrüstung der Heldin ist davon nicht betroffen). Dies soll durch die Verwendung eines geeigneten Datencontainers der Standardbibliothek umgesetzt werden. Schauen Sie sich die im Webinar genannten Container genauer an und wählen Sie einen passenden Container aus.
+Damit der restliche Code möglichst unverändert weiterverwendet werden kann, soll die dazugehörige öffentliche Schnittstelle (die Funktionen addInventarItem(), removeInventarItem(), getInventory() und sellItem()) dabei nicht geändert werden (abgesehen von den Änderungen, die sich durch die weitere Aufgabenstellung unten ergeben). Es sollen weiterhin Exceptions geworfen werden, wenn auf einen ungültigen Slot zugegriffen wird.
 
 
-Gegenstände als Heap-Objekte
+Object Ownership
 
-Bis jetzt wurden Gegenstände als Kopien in den Arrays gespeichert, die das Inventar bzw. die Ausrüstung repräsentieren. Dies erschwert allerdings die Implementierung von Gegenständen mit speziellen Eigenschaften über eine entsprechende Vererbungshierarchie. Die Arrays für Inventar und Ausrüstung können nämlich keine Kopien von Unterklassen speichern (da ja der Compiler nicht wissen kann, wieviel Speicherplatz ein Objekt einer Unterklasse benötigt). Außerdem können wir aufgrund der Art und Weise, wie wir Gegenstände abspeichern, Polymorphismus nicht so einfach anwenden.
-Daher sollen für zukünftige Versionen Ihres Spiels die Gegenstände nicht mehr als Kopie, sondern als Referenz bzw. Pointer gespeichert werden. Die Gegenstände werden in Zukunft am Heap erzeugt (also mit dem new Operator) und den jeweiligen Funktionen in Form eines Pointers übergeben.
+Charaktere und die Klasse Game
 
-	• Die Objektvariablen inventory bzw. gear sollen als Array von Pointern umgesetzt werden (z.B. Item* inventory[10])
+Ein weiterer Punkt, den die Spieletester:innen herausgefunden haben, ist, dass das Spiel nach einer längeren Spielzeit abstürzt, da wohl ein Memory Leak vorliegt. Aus diesen Grund soll die Frage der Object Ownership für die Charaktere und Gegenstände gelöst werden. Der Plan ist die Implementierung einer eigenen Klasse Game, der die Ownership über alle Charaktere übernimmt. Für die Charaktere sollen ab jetzt ausschließlich Heap-Objekte (also mit new erzeugte Objekte) zum Einsatz kommen. Diese sollen als Key-Value Paare gespeichert werden, wobei der Name des Charakters den Key bildet (ab jetzt müssen alle Charakternamen eindeutig sein).Schauen Sie sich die im Webinar genannten Container genauer an und wählen Sie einen passenden Container aus. Ob Sie Smart Pointer verwenden wollen, bleibt Ihnen überlassen.
+Diese Klasse soll außerdem die Objektfunktion play()besitzen, die das eigentliche Spiel implementiert (Der Code, der vorher in der main()-Funktion zu finden war, wandert nun in diese Funktion).
+Die Klasse Game soll auch sicherstellen, dass alle Charaktere, deren Lebenspunkte unter 0 sinken, von der Klasse Game direkt nach dem Looten zerstört werden. Damit sollte das Problem der Spieleabstürze gelöst sein. Spätestens im Destruktor von Game sollten alle noch lebenden Charaktere zerstört werden. Implementieren Sie entsprechende Debuggingausgaben in den Destruktoren aller Charaktere, damit Sie nachverfolgen können, dass am Ende auch tatsächlich alle Charaktere zerstört wurden.
 
-	• Funktionen, die Gegenstände zurückgeben, haben nun als Rückgabewert einen Pointer (z.B. Item* getInventory(int index)).
+Gegenstände
 
-	• Funktionen, die Gegenstände als Eingabeargument erwarten, bekommen nun einen Pointer übergeben (z.B. int addInventoryItem(Item* item)).
+Auch für die Gegenstände muss die Ownership-Frage gestellt werden. Für Gegenstände, die sich im Iventar eines Charakters befinden, übernimmt der Charakter die Ownership. 
+Zur Vereinfachung sollen für die Verwaltung der Gegenstände Smart Pointer verwendet werden. Damit soll sichergestellt werden, dass mittels Reference Counting Gegenstände automatisch zerstört werden, die nicht mehr benötigt werden. Dadurch ergeben sich folgende Änderungen:
 
-	• Die Objektvariable isValid wird nun nicht mehr benötigt. In Zukunft wird ein nicht belegter Inventar- bzw. Ausrüstungsslot dadurch erkannt, dass im entsprechenden Arrayeintrag ein Nullpointer gespeichert ist.
+Das Inventar bzw. das Array gear für die Ausrüstung speichert nun Objekte vom Typ std::shared_ptr<Item>.
 
-	• Achten Sie darauf, dass keine Speicherlecks entstehen und zerstören Sie Gegenstände, sobald sie nicht mehr benötigt werden (z.B. in Destruktoren). Achten Sie aber auch darauf, dass sie Gegenstände nicht zu früh zerstören! Solange noch irgendwo ein Pointer, der in Verwendung ist, auf den jeweiligen Gegenstand existiert, darf dieser noch nicht zerstört werden.
+Funktionen, die Gegenstände zurückgeben, haben nun als Rückgabewert einen Smart Pointer (z.B. std::shared_ptr<Item> getInventory(int index)).
+	
+Funktionen, die Gegenstände als Eingabeargument erwarten, bekommen nun einen Smart Pointer übergeben (z.B. int addInventarItem(std::shared_ptr<Item> item)).
+
+Gegenstände, die sich nicht im Inventar eines Charakters befinden (z.B. verkaufte Gegenstände), brauchen auch einen Object Owner. In diesem Fall soll auch die Klasse Game die Object Ownership übernehmen. Wählen Sie wieder selbstständig einen passenden Datencontainer aus. Die Gegenstände brauchen kein eindeutig identifizierendes Merkmal.
+
+Überprüfen Sie durch entsprechende Debuggingausgaben im Destruktor, ob die Gegenstände auch tatsächlich gelöscht werden.
+			
+			
+Testprogramm
+
+Implementieren Sie wieder ein Testprogramm, diesmal in der play() Methode, in dem die Heldin gegen zwei Feinde kämpft, den Zauberer Pascal und den Kämpfer Matthias. Am Ende der Kämpfe sollen wieder alle erbeuteten Gegenstände verkauft werden. In der main()-Funktion wird nur eine Instanz der Klasse Game als Stackobjekt erzeugt und dann die Methode play()aufgerufen.
 
 
-Exceptions
-
-Die Fehlerbehandlung soll auf robustere Beine gestellt und mithilfe von Exceptions neu konzipiert werden.
-
-	• Alle Funktionen, die auf ein Array zugreifen und die den Array-Index als Eingabeargument übergeben bekommen (z.B. getInventory()) sollen im Falle eines ungültigen Index eine entsprechende Exception werfen.
-
-	• Beim Versuch des Hinzufügens eines Gegenstands in ein volles Inventar bzw. Ausrüstung soll eine entsprechende Exception geworfen werden.
-
-	• Wenn auf einem ungültigen Inventar- bzw. Ausrüstungsslot zugegriffen wird (z.B. bei getInventory() oder sellItem()), d.h. der Index ist zwar korrekt, aber an dieser Stelle ist kein Gegenstand gespeichert, soll eine entsprechende Exception geworfen werden.
-
-	• Setter-Methoden sollen eine entsprechende Exception werfen, wenn ein ungültiger Wert übergeben wird (z.B. negativer Wert bei setGold()).
-
-	• Überlegen Sie sich, ob es weitere Stellen in Ihrem Programm gibt, für die eine Fehlerbehandlung mit Exceptions sinnvoll wäre.
-
-	• Implementieren Sie eigene Exception-Klassen für jeden Fehlertyp und überlegen Sie sich eine passende Vererbungshierarchie für Ihre Exceptions.
-
-	• Fügen Sie in Ihr Programm entsprechende Exception-Handler ein, die passende Fehlermeldungen ausgeben und dafür sorgen, dass Ihr Programm im Fehlerfall weiterhin funktioniert.
-
-Implementieren Sie wieder in der main.cpp ein Testprogramm, in dem die Heldin gegen zwei Feinde kämpft, den Zauberer Pascal und den Kämpfer Matthias. Sorgen Sie dafür, dass jede Exception einen passenden Exception-Handler findet. Der vom Compiler installierte Default-Exception-Handler sollte von Ihrem Programm nie verwendet werden.
-
-Fügen Sie in Ihrem Testprogramm auch Testfälle hinzu, die Exceptions provozieren und implemetieren Sie entsprechende Exception Handler (z.B. Rufen Sie setGold() mit einem negativen Eingabeparameter auf und implementieren Sie einen dazugehörigen Try-Catch Block, der eine entsprechende Fehlermeldung im Catch-Block ausgibt).
-
-![image](https://github.com/claner2804/HW4/assets/131294860/b990ef3c-29b0-4020-99ca-68b2ee3c0cd6)
+![image](https://github.com/claner2804/Methods-of-Software-Engineering-HW5/assets/131294860/db707df7-a7f4-4d7d-b0aa-65fa70c0b026)
