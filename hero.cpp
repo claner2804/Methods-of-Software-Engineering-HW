@@ -18,6 +18,11 @@ Hero::Hero(const std::string& name, int health, int gold, int armor, int magicRe
 
 
 Hero::~Hero() {
+    for (int i = 0; i < 2; i++) {
+        if (gear[i]) {
+            delete gear[i];
+        }
+    }
     std::cout << name << " verabschiedet sich und reitet in den Sonnenuntergang." << std::endl;
 }
 

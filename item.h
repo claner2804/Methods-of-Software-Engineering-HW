@@ -14,6 +14,7 @@ public:
 
     Item(const std::string& name, int gold);
 
+    //virtual destructor, damit auch die kindklassen ihren speicher freigeben können
     virtual ~Item();
 
     int getGold() const {

@@ -17,6 +17,7 @@ private:
 public:
     Hero(const std::string& name, int health, int gold, int armor, int magicResistance);
 
+    //virtual destructor damit auch die kindklassen ihren speicher freigeben können
     virtual ~Hero();
 
     virtual void attack(Character& enemy) override;
