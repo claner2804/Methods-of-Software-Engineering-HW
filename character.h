@@ -20,7 +20,7 @@ protected:
 public:
     Character(const std::string& name, int health, int gold, int armor, int magicResistance);
 
-    virtual ~Character() {}
+    virtual ~Character();
 
     virtual void attack(Character& enemy) = 0;
 
@@ -91,7 +91,7 @@ public:
 
 
 std::ostream& operator<<(std::ostream& out, const Character& character);
-
+std::ostream& operator<<(std::ostream& out, const Character* character);
 
 
 #endif /* CHARACTER_H_ */

@@ -9,7 +9,12 @@
 #include "item.h"
 
 Hero::Hero(const std::string& name, int health, int gold, int armor, int magicResistance)
-        : Character(name, health, gold, armor, magicResistance) {}
+        : Character(name, health, gold, armor, magicResistance) {
+
+    //gear auf nullptr setzen damit keine undefinierten Werte enthalten sind
+    memset(gear, 0, sizeof(gear));
+
+}
 
 
 Hero::~Hero() {

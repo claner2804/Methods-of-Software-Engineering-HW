@@ -23,8 +23,19 @@ Character::Character(const std::string& name, int health, int gold, int armor, i
     if(magicResistance < 0) {
         throw InvalidArgumentException("Invalid magicResistance value!");
     }
+
+    //inventory auf nullptr setzen damit keine undefinierten Werte enthalten sind
+    memset(inventory, 0, sizeof(inventory));
 }
 
+//im destruktor speicher wieder freigeben
+Character::~Character() {
+    for (int i = 0; i < 10; i++) {
+        if (inventory[i]) {
+            delete inventory[i];
+        }
+    }
+}
 
 Item* Character::getInventory(int i) const {
     if (i >= 0 && i < 10) {
@@ -69,4 +80,9 @@ Item* Character::removeInventory(int slot) {
     std::ostream &operator<<(std::ostream &out, const Character &character) {
         out << character.getName();
         return out;
+}
+
+std::ostream &operator<<(std::ostream &out, const Character *character) {
+    out << character->getName();
+    return out;
 }

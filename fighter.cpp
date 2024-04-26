@@ -3,7 +3,11 @@
 #include <iostream>
 
 Fighter::Fighter(const std::string& name, int health, int gold, int armor, int magicResistance, int strength)
-        : NPC(name, health, gold, armor, magicResistance), strength(strength) {}
+        : NPC(name, health, gold, armor, magicResistance), strength(strength) {
+    if (strength < 0) {
+        throw InvalidArgumentException("Staerke darf nicht negativ sein!");
+    }
+}
 
 Fighter::~Fighter() {
 }

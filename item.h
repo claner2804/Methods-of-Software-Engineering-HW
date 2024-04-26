@@ -3,7 +3,7 @@
 #define ITEM_H_
 
 #include <string>
-
+#include "exceptions.h"
 
 class Item {
 private:
@@ -11,8 +11,10 @@ private:
     int gold;
 
 public:
-    Item();
+
     Item(const std::string& name, int gold);
+
+    virtual ~Item();
 
     int getGold() const {
         return gold;
@@ -21,6 +23,9 @@ public:
     void setGold(int gold) {
         if (gold >= 0) {
             this->gold = gold;
+        }
+        else {
+            throw InvalidArgumentException("Gold darf nicht negativ sein!");
         }
     }
 
@@ -32,11 +37,15 @@ public:
         if (name.size() > 0) {
             this->name = name;
         }
+        else {
+            throw InvalidArgumentException("Name darf nicht leer sein!");
+        }
     }
 };
 
 
 std::ostream& operator<<(std::ostream& out, const Item& item);
+std::ostream& operator<<(std::ostream& out, const Item* item);
 
 
 #endif /* ITEM_H_ */

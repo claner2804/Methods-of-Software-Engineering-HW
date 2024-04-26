@@ -18,7 +18,12 @@ public:
         return magicPower;
     }
     void setMagicPower(int magicPower) {
-        this->magicPower = magicPower;
+        if (magicPower >= 0) {
+            this->magicPower = magicPower;
+        }
+        else {
+            throw InvalidArgumentException("Magie darf nicht negativ sein!");
+        }
     }
 };
 

@@ -20,8 +20,14 @@ public:
     }
 
     void setStrength(int strength) {
-        this->strength = strength;
+        if (strength >= 0) {
+            this->strength = strength;
+        }
+        else {
+            throw InvalidArgumentException("Staerke darf nicht negativ sein!");
+        }
     }
+
 };
 
 #endif /* FIGHTER_H_ */
