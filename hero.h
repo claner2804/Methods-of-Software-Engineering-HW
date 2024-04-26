@@ -2,17 +2,17 @@
 #ifndef HERO_H_
 #define HERO_H_
 
-#include "item.h"
 #include <string>
 #include "character.h"
 
 // forward declarations
 class NPC;
+class Item;
 
 
 class Hero : public Character {
 private:
-    Item gear[2];
+    Item* gear[2];
 
 public:
     Hero(const std::string& name, int health, int gold, int armor, int magicResistance);
@@ -21,20 +21,15 @@ public:
 
     virtual void attack(Character& enemy) override;
 
-    Item sellItem(int index);
+    Item* sellItem(int index);
 
     bool fight(NPC& enemy);
 
-    const Item* getGear(int i) const {
-        if (i >= 0 && i < 2) {
-            return &gear[i];
-        } else {
-            return nullptr;
-        }
-    }
+    Item* getGear(int i) const;
 
-    int addGear(const Item& item);
-    Item removeGear(int slot);
+    int addGear(Item* item);
+
+    Item* removeGear(int slot);
 };
 
 

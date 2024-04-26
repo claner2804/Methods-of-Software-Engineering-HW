@@ -9,7 +9,7 @@ public:
     NPC(const std::string& name, int health, int gold, int armor, int magicResistance);
     virtual ~NPC();
 
-    Item retrieveRandomLoot();
+    Item* retrieveRandomLoot();
 };
 
 #endif /* NPC_H_ */

@@ -14,13 +14,15 @@ NPC::~NPC() {
     }
 }
 
-Item NPC::retrieveRandomLoot() {
+Item* NPC::retrieveRandomLoot() {
     for (int i = 0; i < 10; i++) {
         int dice = rand() % 10;
-        Item item = removeInventory(dice);
-        if (item.isIsValid()) {
-            return item;
+        try {
+            return removeInventory(dice);
+        } catch (InventoryEmptySlotException& e) {
+            //do nothing
         }
     }
-    return Item();
+    //wenn kein Item gefunden wurde
+    return nullptr;
 }

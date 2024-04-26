@@ -5,6 +5,8 @@
 #include <iostream>
 #include "character.h"
 #include "npc.h"
+#include "exceptions.h"
+#include "item.h"
 
 Hero::Hero(const std::string& name, int health, int gold, int armor, int magicResistance)
         : Character(name, health, gold, armor, magicResistance) {}
@@ -14,6 +16,49 @@ Hero::~Hero() {
     std::cout << name << " verabschiedet sich und reitet in den Sonnenuntergang." << std::endl;
 }
 
+Item* Hero::getGear(int i) const {
+    if (i >= 0 && i < 2) {
+        if( gear[i]) {
+            return gear[i];
+        } else {
+            throw InventoryEmptySlotException();
+        }
+    } else {
+        throw InventoryInvalidSlotException();
+    }
+}
+
+
+int Hero::addGear(Item* item) {
+    for (int i = 0; i < 2; i++) {
+        if (!gear[i]) {
+            gear[i] = item;
+            return i;
+        }
+    }
+    //kein freier Slot gefunden
+    throw InventoryFullException();
+}
+
+
+
+Item* Hero::removeGear(int slot) {
+    if (slot >= 0 && slot < 2) {
+        if (gear[slot]) {
+            Item *tmp = gear[slot];
+            //mit nullptr inventory slot leeren
+            gear[slot] = nullptr;
+            //Item zurückgeben
+            return tmp;
+        } else {
+            throw InventoryEmptySlotException();
+        }
+    }
+    throw InventoryInvalidSlotException();
+}
+
+
+
 void Hero::attack(Character& enemy) {
     int dice = 15 + std::rand() % 11 - enemy.getArmor();
     std::cout << name << " trifft " << enemy << " fuer " << dice << " Lebenspunkte!" << std::endl;
@@ -21,17 +66,22 @@ void Hero::attack(Character& enemy) {
 }
 
 
-Item Hero::sellItem(int index) {
+Item* Hero::sellItem(int index) {
     if (index >= 0 && index < 10) {
-        if (inventory[index].isIsValid()) {
-            Item item = inventory[index];
-            setGold(gold += inventory[index].getGold());
-            inventory[index].setIsValid(false);
+        if (inventory[index]) {
+            Item* item = inventory[index];
+            setGold(gold += inventory[index]->getGold());
+            inventory[index] = nullptr;
             return item;
         }
+        else {
+            throw InventoryEmptySlotException();
+        }
     }
-    return Item();
+    throw InventoryInvalidSlotException();
 }
+
+
 
 bool Hero::fight(NPC& enemy) {
     while (health > 0 && enemy.getHealth() > 0) {
@@ -42,12 +92,14 @@ bool Hero::fight(NPC& enemy) {
     }
     if (enemy.getHealth() <= 0) {
         std::cout << enemy << " fiel in Ohnmacht! " << name << " hat noch " << health << " Lebenspunkte uebrig!" << std::endl;
-        Item loot = enemy.retrieveRandomLoot();
-        if (loot.isIsValid()) {
-            if (addInventory(loot) >= 0) {
-                std::cout << "Gegenstand " << loot << " wurde zum Inventar von " << name << " hinzugefügt." << std::endl;
-            } else {
-                std::cout << "Im Inventar von " << name << " ist leider kein Platz mehr für " << loot << "." <<std::endl;
+        Item* loot = enemy.retrieveRandomLoot();
+        if (loot) {
+            try {
+                addInventory(loot);
+                std::cout << "Gegenstand " << loot << " wurde zum Inventar von " << name << " hinzugefügt."
+                          << std::endl;
+            } catch (InventoryFullException &e) {
+                std::cout << "Im Inventar von " << name << " ist leider kein Platz mehr für " << loot << "." << std::endl;
             }
         } else {
             std::cout << "Es konnte kein Gegenstand erbeutet werden." << std::endl;
@@ -59,22 +111,3 @@ bool Hero::fight(NPC& enemy) {
     }
 }
 
-
-int Hero::addGear(const Item& item) {
-    for (int i = 0; i < 2; i++) {
-        if (!gear[i].isIsValid()) {
-            gear[i] = item;
-            return i;
-        }
-    }
-    return -1;
-}
-
-Item Hero::removeGear(int slot) {
-    if (slot >= 0 && slot < 2) {
-        Item tmp = gear[slot];
-        gear[slot].setIsValid(false);
-        return tmp;
-    }
-    return Item();
-}

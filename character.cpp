@@ -4,40 +4,69 @@
 #include <cstdlib>
 #include <iostream>
 #include "hero.h"
+#include "exceptions.h"
 
 
+//im Konstruktor wird geprüft, ob die Werte korrekt sind (RAII und Exceptions)
 Character::Character(const std::string& name, int health, int gold, int armor, int magicResistance)
-        : name(name), health(health), gold(gold), armor(armor), magicResistance(magicResistance) {}
+        //wenn health kleiner 0 ist, wird 0 gesetzt
+        : name(name), health(health < 0 ? 0 : health), gold(gold), armor(armor), magicResistance(magicResistance) {
 
+    if(gold < 0) {
+        throw InvalidArgumentException("Invalid gold value!");
+    }
 
-const Item* Character::getInventory(int i) const {
-    if (i >= 0 && i < 10) {
-        return &inventory[i];
-    } else {
-        return nullptr;
+    if(armor < 0) {
+        throw InvalidArgumentException("Invalid armor value!");
+    }
+
+    if(magicResistance < 0) {
+        throw InvalidArgumentException("Invalid magicResistance value!");
     }
 }
 
-int Character::addInventory(const Item& item) {
+
+Item* Character::getInventory(int i) const {
+    if (i >= 0 && i < 10) {
+        if( inventory[i]) {
+            return inventory[i];
+        } else {
+        throw InventoryEmptySlotException();
+        }
+    } else {
+        throw InventoryInvalidSlotException();
+    }
+}
+
+int Character::addInventory(Item* item) {
     for (int i = 0; i < 10; i++) {
-        if (!inventory[i].isIsValid()) {
+        if (!inventory[i]) {
             inventory[i] = item;
             return i;
         }
     }
-    return -1;
+    //kein freier Slot gefunden
+   throw InventoryFullException();
 }
 
-Item Character::removeInventory(int slot) {
+
+
+Item* Character::removeInventory(int slot) {
     if (slot >= 0 && slot < 10) {
-        Item tmp = inventory[slot];
-        inventory[slot].setIsValid(false);
-        return tmp;
+        if (inventory[slot]) {
+            Item *tmp = inventory[slot];
+            //mit nullptr inventory slot leeren
+            inventory[slot] = nullptr;
+            //Item zurückgeben
+            return tmp;
+        } else {
+            throw InventoryEmptySlotException();
+        }
     }
-    return Item();
+        throw InventoryInvalidSlotException();
 }
 
-std::ostream& operator<<(std::ostream& out, const Character& character) {
-    out << character.getName();
-    return out;
+    std::ostream &operator<<(std::ostream &out, const Character &character) {
+        out << character.getName();
+        return out;
 }

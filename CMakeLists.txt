@@ -9,4 +9,5 @@ add_executable(HW4 character.cpp
         item.cpp
         main.cpp
         npc.cpp
-        sorcerer.cpp)
+        sorcerer.cpp
+        exceptions.h)

@@ -2,10 +2,11 @@
 #ifndef CHARACTER_H_
 #define CHARACTER_H_
 
-#include "item.h"
 #include <string>
+#include "exceptions.h"
 
-
+//forward declaration, weil wir hier nur pointer auf item haben
+class Item;
 
 class Character {
 protected:
@@ -14,7 +15,7 @@ protected:
     int gold;
     int armor;
     int magicResistance;
-    Item inventory[10];
+    Item* inventory[10]; //pointer haben immer 8 byte auf 64 bit systemen
 
 public:
     Character(const std::string& name, int health, int gold, int armor, int magicResistance);
@@ -31,6 +32,9 @@ public:
         if (gold >= 0) {
             this->gold = gold;
         }
+        else {
+            throw InvalidArgumentException("Gold darf nicht negativ sein!");
+        }
     }
 
     int getHealth() const {
@@ -44,21 +48,28 @@ public:
         this->health = health;
     }
 
-    const Item* getInventory(int i) const;
+
+    Item* getInventory(int i) const;
 
     const std::string& getName() const {
         return name;
     }
 
-    int addInventory(const Item& item);
-    Item removeInventory(int slot);
+    int addInventory(Item* item);
+
+    Item* removeInventory(int slot);
 
     int getArmor() const {
         return armor;
     }
 
     void setArmor(int armor) {
-        this->armor = armor;
+        if (armor >= 0) {
+            this->armor = armor;
+        }
+        else {
+            throw InvalidArgumentException("Armor darf nicht negativ sein!");
+        }
     }
 
     int getMagicResistance() const {
@@ -66,8 +77,15 @@ public:
     }
 
     void setMagicResistance(int magicResistance) {
-        this->magicResistance = magicResistance;
+        if (magicResistance >= 0) {
+            this->magicResistance = magicResistance;
+        }
+        else {
+            throw InvalidArgumentException("Magie Resistenz darf nicht negativ sein!");
+        }
     }
+
+
 };
 
 
