@@ -6,7 +6,7 @@
 #include "hero.h"
 #include "character.h"
 #include "fighter.h"
-#include "Sorcerer.h"
+#include "sorcerer.h"
 #include "item.h"
 
 
@@ -14,11 +14,11 @@
 int main() {
     std::srand(std::time(nullptr));
 
+
     Hero hero("Annina", 300, 10, 10, 10);
 
-
     Fighter matthias("Matthias", 50, 100, 5, 5, 5);
-    matthias.addInventory(new Item("Zaubertrank", 120));
+    matthias.addInventory(new Item("Rüstung", 50));
     matthias.addInventory(new Item("Schwert", 80));
 
     try {

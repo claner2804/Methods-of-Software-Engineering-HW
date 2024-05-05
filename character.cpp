@@ -5,6 +5,9 @@
 #include <iostream>
 #include "hero.h"
 #include "exceptions.h"
+#include <vector>
+#include "item.h"
+#include <memory>
 
 
 //im Konstruktor wird geprüft, ob die Werte korrekt sind (RAII und Exceptions)
@@ -24,15 +27,14 @@ Character::Character(const std::string& name, int health, int gold, int armor, i
         throw InvalidArgumentException("Invalid magicResistance value!");
     }
 
-    //inventory auf nullptr setzen damit keine undefinierten Werte enthalten sind
-    memset(inventory, 0, sizeof(inventory));
 }
 
 //im destruktor speicher wieder freigeben
 Character::~Character() {
     for (int i = 0; i < 10; i++) {
         if (inventory[i]) {
-            delete inventory[i];
+            //aus vector löschen und speicher freigeben
+            inventory[i].reset();
         }
     }
 }
@@ -40,7 +42,9 @@ Character::~Character() {
 Item* Character::getInventory(int i) const {
     if (i >= 0 && i < 10) {
         if( inventory[i]) {
-            return inventory[i];
+            //Item zurückgeben
+            return inventory[i].get();
+
         } else {
         throw InventoryEmptySlotException();
         }
@@ -49,15 +53,14 @@ Item* Character::getInventory(int i) const {
     }
 }
 
-int Character::addInventory(Item* item) {
+int Character::addInventory(std::shared_ptr<Item> item) {
     for (int i = 0; i < 10; i++) {
         if (!inventory[i]) {
             inventory[i] = item;
             return i;
         }
     }
-    //kein freier Slot gefunden
-   throw InventoryFullException();
+    throw InventoryFullException();
 }
 
 
@@ -65,11 +68,11 @@ int Character::addInventory(Item* item) {
 Item* Character::removeInventory(int slot) {
     if (slot >= 0 && slot < 10) {
         if (inventory[slot]) {
-            Item *tmp = inventory[slot];
-            //mit nullptr inventory slot leeren
-            inventory[slot] = nullptr;
+            //Item aus vector löschen und speicher freigeben
+            inventory[slot].reset();
             //Item zurückgeben
-            return tmp;
+            return inventory[slot].get();
+
         } else {
             throw InventoryEmptySlotException();
         }

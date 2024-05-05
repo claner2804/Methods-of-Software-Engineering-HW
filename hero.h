@@ -4,6 +4,8 @@
 
 #include <string>
 #include "character.h"
+#include <memory>
+#include <vector>
 
 // forward declarations
 class NPC;
@@ -12,7 +14,8 @@ class Item;
 
 class Hero : public Character {
 private:
-    Item* gear[2];
+    //gear array auf vector mit shared_ptr ändern
+    std::vector<std::shared_ptr<Item>> gear;
 
 public:
     Hero(const std::string& name, int health, int gold, int armor, int magicResistance);

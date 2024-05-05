@@ -7,12 +7,11 @@
 #include "npc.h"
 #include "exceptions.h"
 #include "item.h"
+#include <memory>
+#include <vector>
 
 Hero::Hero(const std::string& name, int health, int gold, int armor, int magicResistance)
         : Character(name, health, gold, armor, magicResistance) {
-
-    //gear auf nullptr setzen damit keine undefinierten Werte enthalten sind
-    memset(gear, 0, sizeof(gear));
 
 }
 
@@ -20,7 +19,7 @@ Hero::Hero(const std::string& name, int health, int gold, int armor, int magicRe
 Hero::~Hero() {
     for (int i = 0; i < 2; i++) {
         if (gear[i]) {
-            delete gear[i];
+            gear[i].reset();
         }
     }
     std::cout << name << " verabschiedet sich und reitet in den Sonnenuntergang." << std::endl;
@@ -29,7 +28,9 @@ Hero::~Hero() {
 Item* Hero::getGear(int i) const {
     if (i >= 0 && i < 2) {
         if( gear[i]) {
-            return gear[i];
+            //gear zurückgeben
+            return gear[i].get();
+
         } else {
             throw InventoryEmptySlotException();
         }
@@ -42,7 +43,8 @@ Item* Hero::getGear(int i) const {
 int Hero::addGear(Item* item) {
     for (int i = 0; i < 2; i++) {
         if (!gear[i]) {
-            gear[i] = item;
+            //Item in gear speichern
+            gear[i] = std::shared_ptr<Item>(item);
             return i;
         }
     }
@@ -55,11 +57,10 @@ int Hero::addGear(Item* item) {
 Item* Hero::removeGear(int slot) {
     if (slot >= 0 && slot < 2) {
         if (gear[slot]) {
-            Item *tmp = gear[slot];
-            //mit nullptr inventory slot leeren
-            gear[slot] = nullptr;
+            //Item aus vector löschen und speicher freigeben
+            gear[slot].reset();
             //Item zurückgeben
-            return tmp;
+            return gear[slot].get();
         } else {
             throw InventoryEmptySlotException();
         }
@@ -79,10 +80,14 @@ void Hero::attack(Character& enemy) {
 Item* Hero::sellItem(int index) {
     if (index >= 0 && index < 10) {
         if (inventory[index]) {
-            Item* item = inventory[index];
+            //dem vector das item entnehmen
+            std::shared_ptr<Item> item = inventory[index];
+            //gold erhöhen
             setGold(gold += inventory[index]->getGold());
-            inventory[index] = nullptr;
-            return item;
+            //speicher freigeben
+            inventory[index].reset();
+            //Item zurückgeben
+            return item.get();
         }
         else {
             throw InventoryEmptySlotException();

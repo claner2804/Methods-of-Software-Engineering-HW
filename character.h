@@ -4,6 +4,8 @@
 
 #include <string>
 #include "exceptions.h"
+#include <iostream>
+#include <vector>
 
 //forward declaration, weil wir hier nur pointer auf item haben
 class Item;
@@ -15,7 +17,10 @@ protected:
     int gold;
     int armor;
     int magicResistance;
-    Item* inventory[10]; //pointer haben immer 8 byte auf 64 bit systemen
+
+    //vector mit shared_ptr statt array, weil wir die größe nicht kennen
+    std::vector<std::shared_ptr<Item>> inventory;
+
 
 public:
     Character(const std::string& name, int health, int gold, int armor, int magicResistance);
@@ -56,7 +61,7 @@ public:
         return name;
     }
 
-    int addInventory(Item* item);
+    int addInventory(std::shared_ptr<Item> item);
 
     Item* removeInventory(int slot);
 
