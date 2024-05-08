@@ -19,7 +19,7 @@ protected:
     int magicResistance;
 
     //vector mit shared_ptr statt array, weil wir die größe nicht kennen
-    std::vector<std::shared_ptr<Item>> inventory;
+    std::vector<std::shared_ptr<Item> > inventory;
 
 
 public:
@@ -61,7 +61,7 @@ public:
         return name;
     }
 
-    int addInventory(std::shared_ptr<Item> item);
+    void addInventory(std::shared_ptr<Item> item);
 
     Item* removeInventory(int slot);
 

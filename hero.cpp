@@ -77,24 +77,27 @@ void Hero::attack(Character& enemy) {
 }
 
 
-Item* Hero::sellItem(int index) {
-    if (index >= 0 && index < 10) {
-        if (inventory[index]) {
-            //dem vector das item entnehmen
-            std::shared_ptr<Item> item = inventory[index];
-            //gold erhöhen
-            setGold(gold += inventory[index]->getGold());
-            //speicher freigeben
-            inventory[index].reset();
-            //Item zurückgeben
-            return item.get();
-        }
-        else {
-            throw InventoryEmptySlotException();
-        }
+std::shared_ptr<Item> Hero::sellItem(int index) {
+    //überprüfen ob index im gültigen bereich liegt
+    if (index < 0 || index >= inventory.size()) {
+        //wenn nicht exception werfen
+        throw InventoryInvalidSlotException();
     }
-    throw InventoryInvalidSlotException();
+    //überprüfen ob item an der stelle existiert
+    if (!inventory[index]) {
+        //wenn nicht exception werfen
+        throw InventoryEmptySlotException();
+    }
+    //shared_ptr auf item an der stelle index holen
+    std::shared_ptr<Item> item = inventory[index];
+    //gold des heros um den goldwert des items erhöhen
+    setGold(gold += item->getGold());
+    //item aus dem vector löschen
+    inventory.erase(inventory.begin() + index);
+    //item zurückgeben
+    return item;
 }
+
 
 
 
@@ -110,7 +113,7 @@ bool Hero::fight(NPC& enemy) {
         Item* loot = enemy.retrieveRandomLoot();
         if (loot) {
             try {
-                addInventory(loot);
+                addInventory(std::shared_ptr<Item>(loot));
                 std::cout << "Gegenstand " << loot << " wurde zum Inventar von " << name << " hinzugefügt."
                           << std::endl;
             } catch (InventoryFullException &e) {

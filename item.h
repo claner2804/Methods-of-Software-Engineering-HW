@@ -42,11 +42,13 @@ public:
             throw InvalidArgumentException("Name darf nicht leer sein!");
         }
     }
+
+    friend std::ostream& operator<<(std::ostream& os, const Item& item);
+
 };
 
 
-std::ostream& operator<<(std::ostream& out, const Item& item);
-std::ostream& operator<<(std::ostream& out, const Item* item);
+
 
 
 #endif /* ITEM_H_ */

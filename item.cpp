@@ -1,6 +1,11 @@
 
-#include "item.h"
 #include <iostream>
+#include "item.h"
+
+std::ostream& operator<<(std::ostream& os, const Item& item) {
+    os << "Item: " << item.getName() << ", Gold: " << item.getGold();
+    return os;
+}
 
 Item::Item(const std::string& name, int gold)
         : name(name), gold(gold >= 0 ? gold : 0) {
@@ -16,16 +21,8 @@ Item::Item(const std::string& name, int gold)
 }
 
 
+
 Item::~Item() {
     std::cout << "Item " << name << " wurde zerstoert!" << std::endl;
 }
 
-std::ostream& operator<<(std::ostream& out, const Item& item) {
-    out << item.getName();
-    return out;
-}
-
-std::ostream& operator<<(std::ostream& out, const Item* item) {
-    out << item->getName();
-    return out;
-}

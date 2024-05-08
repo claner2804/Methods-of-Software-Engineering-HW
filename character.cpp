@@ -53,14 +53,8 @@ Item* Character::getInventory(int i) const {
     }
 }
 
-int Character::addInventory(std::shared_ptr<Item> item) {
-    for (int i = 0; i < 10; i++) {
-        if (!inventory[i]) {
-            inventory[i] = item;
-            return i;
-        }
-    }
-    throw InventoryFullException();
+void Character::addInventory(std::shared_ptr<Item> item) {
+    this->inventory.push_back(item);
 }
 
 

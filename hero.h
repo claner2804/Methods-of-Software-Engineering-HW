@@ -15,7 +15,7 @@ class Item;
 class Hero : public Character {
 private:
     //gear array auf vector mit shared_ptr ändern
-    std::vector<std::shared_ptr<Item>> gear;
+    std::vector<std::shared_ptr<Item> > gear;
 
 public:
     Hero(const std::string& name, int health, int gold, int armor, int magicResistance);
@@ -23,9 +23,10 @@ public:
     //virtual destructor damit auch die kindklassen ihren speicher freigeben können
     virtual ~Hero();
 
-    virtual void attack(Character& enemy) override;
+    virtual void attack(Character& enemy);
 
-    Item* sellItem(int index);
+    //std::shared_ptr<Item> sellItem(int index);
+    std::shared_ptr<Item> sellItem(int index);
 
     bool fight(NPC& enemy);
 

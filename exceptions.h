@@ -7,19 +7,20 @@
 //basisklasse für alle exceptions
 class GameException : public std::runtime_error{
 public:
-    using std::runtime_error::runtime_error;
+    explicit GameException(const std::string &message) : std::runtime_error(message) {
+    }
 };
 
 //basisklasse für inventory exceptions
 class InventoryException : public GameException{
 public:
-    using GameException::GameException;
+    explicit InventoryException(const std::string &message) : GameException(message) {}
 };
 
 
 class InvalidArgumentException : public GameException{
 public:
-    using GameException::GameException;
+    explicit InvalidArgumentException(const std::string &message) : GameException(message) {}
 };
 
 
